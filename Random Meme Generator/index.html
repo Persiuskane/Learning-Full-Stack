@@ -8,29 +8,32 @@
 </head>
 <body>
     <main>
-        <div>
+        <div class="header">
             <h1>Random Generator</h1>
         </div>
-        <div>
-            <div>
-                <h3 id="memeHead">Memes</h3>
+        <div class="container">
+            <div id="left-box">
+                <div class="box">
+                    <h3 id="memeHead">Memes</h3>
+                </div>
+                <div class="box">
+                    <h3 id="jokeHead">Random Joke</h3>
+                </div>
+                <div class="box">
+                    <h3 id="quoteHead">Quote</h3>
+                </div>
+                <div class="box">
+                    <h3 id="riddleHead">Riddle</h3>
+                </div>
             </div>
-            <div>
-                <h3 id="jokeHead">Random Joke</h3>
+        
+            <div id="right-box">
+                <div><button id="meme" class="btn" onclick="showMemeFunc()">Show a Meme</button></div>
+                <div><button id="joke" class="btn" onclick="showJokeFunc()">Tell Me a Joke</button></div>
+                <div><button id="quote" class="btn" onclick="showQuoteFunc()">Random Quote</button></div>
+                <div><button id="riddle" class="btn" onclick="showRiddleFunc()">Riddle Me</button></div>
+                <div><button id="answer" class="btn" onclick="showAnswerFunc()">Reveal Answer</button></div>
             </div>
-            <div>
-                <h3 id="quoteHead">Quote</h3>
-            </div>
-            <div>
-                <h3 id="riddleHead">Riddle</h3>
-            </div>
-        </div>
-        <div>
-            <div><button id="meme" onclick="showMemeFunc()">Show a Meme</button></div>
-            <div><button id="joke" onclick="showJokeFunc()">Tell Me a Joke</button></div>
-            <div><button id="quote" onclick="showQuoteFunc()">Random Quote</button></div>
-            <div><button id="riddle" onclick="showRiddleFunc()">Riddle Me</button></div>
-            <div><button id="answer" onclick="showAnswerFunc()">Reveal Answer</button></div>
         </div>
     </main>
     <script src="script.js"></script>
