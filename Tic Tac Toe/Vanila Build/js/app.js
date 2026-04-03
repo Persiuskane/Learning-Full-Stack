@@ -164,32 +164,24 @@ function init() {
   const view = new View();
   const store = new Store("live-t3-game", players);
 
-  function initView() {
-    view.closeAll();
-    view.clearMoves();
-    view.setTurnIndicator(store.game.currentPlayer);
-    view.updateScoreBoard(
-      store.stats.playerWithStats[0].wins,
-      store.stats.playerWithStats[1].wins,
-      store.stats.ties,
-    );
-    view.initializeMove(store.game.moves);
-  }
+  store.addEventListener("stateChange", () => {
+    view.render(store.stats, store.game);
+  });
 
-  initView();
+  // New reload render the Screen
+  view.render(store.stats, store.game);
+
+  // Multiple tab consistency
   window.addEventListener("storage", () => {
-    initView();
+    view.render(store.stats, store.game);
   });
 
   view.bindGameResetEvent((event) => {
     store.reset();
-    initView();
-    console.log(store.stats);
   });
 
   view.bindNewRoundBtnEvent((event) => {
     store.newRound();
-    initView();
   });
 
   view.bindPlayerMoveEvent((square) => {
@@ -198,20 +190,8 @@ function init() {
     );
 
     if (existingMoves) return;
-    // console.log(store.game.currentPlayer);
 
-    view.handlePlayerMove(square, store.game.currentPlayer);
     store.playerMove(+square.id);
-
-    if (store.game.status.isComplete) {
-      const msg = store.game.status.winner
-        ? `${store.game.status.winner.name} has won.`
-        : "Tie!";
-      view.openModel(msg);
-      return;
-    }
-
-    view.setTurnIndicator(store.game.currentPlayer);
   });
 }
 

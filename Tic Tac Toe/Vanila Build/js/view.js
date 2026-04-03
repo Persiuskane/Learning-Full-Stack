@@ -15,6 +15,7 @@ export default class View {
     this.$.p1Wins = this.#qs('[data-id="p1-wins"]');
     this.$.p2Wins = this.#qs('[data-id="p2-wins"]');
     this.$.ties = this.#qs('[data-id="ties"]');
+    this.$.grid = this.#qs('[data-id="grid"]');
     // this.$.turnIcon = this.#qs('[data-id="turn-icon"]');
     // this.$.turntext = this.#qs('[data-id="turn-text"]');
 
@@ -24,6 +25,30 @@ export default class View {
     this.$.menuBtn.addEventListener("click", (event) => {
       this.#toggleMenu();
     });
+  }
+
+  render(stats, game) {
+    const { playerWithStats, ties } = stats;
+    const {
+      moves,
+      currentPlayer,
+      status: { isComplete, winner },
+    } = game;
+
+    this.#closeAll();
+    this.#clearMoves();
+    this.#updateScoreBoard(
+      playerWithStats[0].wins,
+      playerWithStats[1].wins,
+      ties,
+    );
+    this.#initializeMove(moves);
+    if (isComplete) {
+      const msg = winner ? `${winner.name} has won.` : "Tie!";
+      this.#openModel(msg);
+      return;
+    }
+    this.#setTurnIndicator(currentPlayer);
   }
 
   /**
@@ -40,43 +65,41 @@ export default class View {
   }
 
   bindPlayerMoveEvent(handler) {
-    this.$$.squares.forEach((square) => {
-      square.addEventListener("click", () => handler(square));
-    });
+    this.#delegate(this.$.grid, '[data-id="square"]', "click", handler);
   }
 
   /**
    * DOM Helper Methods
    */
 
-  updateScoreBoard(p1Wins, p2Wins, ties) {
+  #updateScoreBoard(p1Wins, p2Wins, ties) {
     this.$.p1Wins.innerText = `${p1Wins} wins`;
     this.$.p2Wins.innerText = `${p2Wins} wins`;
     this.$.ties.innerText = `${ties}`;
   }
 
-  openModel(msg) {
+  #openModel(msg) {
     this.$.model.classList.remove("hidden");
     this.$.modelTxt.textContent = msg;
   }
 
-  closeAll() {
+  #closeAll() {
     this.#closeModel();
     this.#closeMenu();
   }
 
-  clearMoves() {
+  #clearMoves() {
     this.$$.squares.forEach((square) => {
       square.replaceChildren();
     });
   }
 
-  initializeMove(moves) {
+  #initializeMove(moves) {
     this.$$.squares.forEach((square) => {
       const existingMoves = moves.find((move) => move.squareId === +square.id);
 
       if (existingMoves) {
-        this.handlePlayerMove(square, existingMoves.player);
+        this.#handlePlayerMove(square, existingMoves.player);
       }
     });
   }
@@ -103,7 +126,7 @@ export default class View {
     icon.classList.toggle("fa-chevron-up");
   }
 
-  setTurnIndicator(player) {
+  #setTurnIndicator(player) {
     const turn = this.$.turn;
     const turnIcon = document.createElement("i");
     const turnText = document.createElement("p");
@@ -116,7 +139,7 @@ export default class View {
     turn.replaceChildren(turnIcon, turnText);
   }
 
-  handlePlayerMove(squareEl, player) {
+  #handlePlayerMove(squareEl, player) {
     const icon = document.createElement("i");
     icon.classList.add("fa-solid", player.iconClass, player.colorClass);
     squareEl.replaceChildren(icon);
@@ -134,5 +157,13 @@ export default class View {
     const elList = document.querySelectorAll(selector);
     if (!elList) throw new Error("Could not find elements");
     return elList;
+  }
+
+  #delegate(el, selector, eventKey, handler) {
+    el.addEventListener(eventKey, (event) => {
+      if (event.target.matches(selector)) {
+        handler(event.target);
+      }
+    });
   }
 }
