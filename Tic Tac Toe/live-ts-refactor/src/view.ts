@@ -26,11 +26,11 @@ export default class View {
     this.$.ties = this.#qs('[data-id="ties"]');
     this.$.grid = this.#qs('[data-id="grid"]');
     // this.$.turnIcon = this.#qs('[data-id="turn-icon"]');
-    // this.$.turntext = this.#qs('[data-id="turn-text"]');
+    // this.$.turnText = this.#qs('[data-id="turn-text"]');
 
     this.$$.squares = this.#qsAll('[data-id="square"]');
 
-    // Ui Only Event Listners
+    // Ui Only Event Listeners
     this.$.menuBtn.addEventListener("click", (event) => {
       this.#toggleMenu();
     });
@@ -47,8 +47,8 @@ export default class View {
     this.#closeAll();
     this.#clearMoves();
     this.#updateScoreBoard(
-      playerWithStats[0].wins,
-      playerWithStats[1].wins,
+      playerWithStats[0]!.wins,
+      playerWithStats[1]!.wins,
       ties,
     );
     this.#initializeMove(moves);
@@ -65,16 +65,16 @@ export default class View {
    */
 
   bindGameResetEvent(handler: EventListener) {
-    this.$.resetBtn.addEventListener("click", handler);
-    this.$.modelBtn.addEventListener("click", handler);
+    this.$.resetBtn!.addEventListener("click", handler);
+    this.$.modelBtn!.addEventListener("click", handler);
   }
 
   bindNewRoundBtnEvent(handler: EventListener) {
-    this.$.newRoundBtn.addEventListener("click", handler);
+    this.$.newRoundBtn!.addEventListener("click", handler);
   }
 
   bindPlayerMoveEvent(handler: (el: Element) => void) {
-    this.#delegate(this.$.grid, '[data-id="square"]', "click", handler);
+    this.#delegate(this.$.grid!, '[data-id="square"]', "click", handler);
   }
 
   /**
@@ -83,16 +83,16 @@ export default class View {
 
   #updateScoreBoard(p1Wins: number, p2Wins: number, ties: number) {
     if (p1Wins === undefined || p2Wins === undefined || ties === undefined)
-      throw new Error("No Valid Stats Givven");
+      throw new Error("No Valid Stats Given");
 
-    this.$.p1Wins.textContent = `${p1Wins} wins`;
-    this.$.p2Wins.textContent = `${p2Wins} wins`;
-    this.$.ties.textContent = `${ties}`;
+    this.$.p1Wins!.textContent = `${p1Wins} wins`;
+    this.$.p2Wins!.textContent = `${p2Wins} wins`;
+    this.$.ties!.textContent = `${ties}`;
   }
 
-  #openModel(msg) {
-    this.$.model.classList.remove("hidden");
-    this.$.modelTxt.textContent = msg;
+  #openModel(msg: string) {
+    this.$.model!.classList.remove("hidden");
+    this.$.modelTxt!.textContent = msg;
   }
 
   #closeAll() {
@@ -101,13 +101,13 @@ export default class View {
   }
 
   #clearMoves() {
-    this.$$.squares.forEach((square) => {
+    this.$$.squares!.forEach((square) => {
       square.replaceChildren();
     });
   }
 
   #initializeMove(moves: Move[]) {
-    this.$$.squares.forEach((square) => {
+    this.$$.squares!.forEach((square) => {
       const existingMoves = moves.find((move) => move.squareId === +square.id);
 
       if (existingMoves) {
@@ -117,29 +117,29 @@ export default class View {
   }
 
   #closeModel() {
-    this.$.model.classList.add("hidden");
+    this.$.model!.classList.add("hidden");
   }
 
   #closeMenu() {
-    this.$.menuItems.classList.add("hidden");
-    this.$.menuBtn.classList.remove("border");
-    const icon = this.#qs("i", this.$.menu);
+    this.$.menuItems!.classList.add("hidden");
+    this.$.menuBtn!.classList.remove("border");
+    const icon = this.#qs("i", this.$.menu!);
 
     icon.classList.add("fa-chevron-down");
     icon.classList.remove("fa-chevron-up");
   }
 
   #toggleMenu() {
-    this.$.menuItems.classList.toggle("hidden");
-    this.$.menuBtn.classList.toggle("border");
-    const icon = this.#qs("i", this.$.menu);
+    this.$.menuItems!.classList.toggle("hidden");
+    this.$.menuBtn!.classList.toggle("border");
+    const icon = this.#qs("i", this.$.menu!);
 
     icon.classList.toggle("fa-chevron-down");
     icon.classList.toggle("fa-chevron-up");
   }
 
   #setTurnIndicator(player: Player) {
-    const turn = this.$.turn;
+    const turn = this.$.turn!;
     const turnIcon = document.createElement("i");
     const turnText = document.createElement("p");
 
@@ -157,12 +157,13 @@ export default class View {
     squareEl.replaceChildren(icon);
   }
 
-  #qs(selector: string, parent?: Element) {
+  #qs(selector: string, parent?: Element): Element {
     const el = parent
       ? parent.querySelector(selector)
       : document.querySelector(selector);
 
-    if (!el) throw new Error("Could not find elements");
+    if (!el)
+      throw new Error(`Could not find element with selector: ${selector}`);
 
     return el;
   }
